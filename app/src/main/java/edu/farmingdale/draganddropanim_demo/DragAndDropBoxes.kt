@@ -58,10 +58,10 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun DragAndDropBoxes(modifier: Modifier = Modifier) {
     var isPlaying by remember { mutableStateOf(true) }
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = modifier.fillMaxSize()) {
 
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .weight(0.2f)
         ) {
@@ -100,29 +100,29 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                         enter = scaleIn() + fadeIn(),
                         exit = scaleOut() + fadeOut()
                     ) {
-//                        Text(
-//                            text = "Right",
-//                            fontSize = 40.sp,
-//                            color = Color.Red,
-//                            fontWeight = FontWeight.Bold,
-//
-//                            modifier = Modifier
-//                                .fillMaxSize()
-//                                .dragAndDropSource {
-//                                    detectTapGestures(
-//                                        onLongPress = { offset ->
-//                                            startTransfer(
-//                                                transferData = DragAndDropTransferData(
-//                                                    clipData = ClipData.newPlainText(
-//                                                        "text",
-//                                                        ""
-//                                                    )
-//                                                )
-//                                            )
-//                                        }
-//                                    )
-//                                }
-//                        )
+                        Text(
+                            text = "Right",
+                            fontSize = 40.sp,
+                            color = Color.Red,
+                            fontWeight = FontWeight.Bold,
+
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .dragAndDropSource {
+                                    detectTapGestures(
+                                        onLongPress = { offset ->
+                                            startTransfer(
+                                                transferData = DragAndDropTransferData(
+                                                    clipData = ClipData.newPlainText(
+                                                        "text",
+                                                        ""
+                                                    )
+                                                )
+                                            )
+                                        }
+                                    )
+                                }
+                        )
                     }
                 }
             }
