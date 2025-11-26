@@ -7,8 +7,11 @@ import android.content.ClipDescription
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntOffsetAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.repeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -125,22 +128,21 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
             }
         }
 
-
+        val infiniteTransition = rememberInfiniteTransition(label="infinite")
         val pOffset by animateIntOffsetAsState(
             targetValue = when (isPlaying) {
-                true -> IntOffset(130, 300)
+                true -> IntOffset(130, 250)
                 false -> IntOffset(130, 100)
             },
             animationSpec = tween(3000, easing = LinearEasing)
         )
 
-        val rtatView by animateFloatAsState(
-            targetValue = if (isPlaying) 360f else 0.0f,
+        val rtatView by infiniteTransition.animateFloat(
+            initialValue = 0F,
+            targetValue = 360f,
             // Configure the animation duration and easing.
-            animationSpec = repeatable(
-                iterations = if (isPlaying) 10 else 1,
-                tween(durationMillis = 3000, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
+            animationSpec = infiniteRepeatable(
+                tween(2000, easing = LinearEasing),
             )
         )
         Box(
@@ -156,7 +158,8 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                     .size(64.dp)
                     .padding(10.dp)
                     .offset(pOffset.x.dp, pOffset.y.dp)
-                    .rotate(rtatView)
+                    .rotate(rtatView),
+
             )
         }
     }

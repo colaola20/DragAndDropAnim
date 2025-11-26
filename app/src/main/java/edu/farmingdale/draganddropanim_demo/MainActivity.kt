@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
 // ToDone 3: Change the circle to a rect
 // ToDone 4: Replace the command right with a image or icon
 // ToDone 5: Make this works in landscape mode only
-// ToDo 6: Rotate the rect around itself
+// ToDone 6: Rotate the rect around itself
 // ToDo 7: Move - translate the rect horizontally and vertically
 // ToDo 8: Add a button to reset the rect to the center of the screen
 // ToDo 9: Enable certain animation based on the drop event (like up or down)
