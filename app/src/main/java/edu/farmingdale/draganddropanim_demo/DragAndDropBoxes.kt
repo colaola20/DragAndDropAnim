@@ -150,9 +150,10 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                 .background(Color.Red)
         ) {
             Icon(
-                imageVector = Icons.Default.Face,
-                contentDescription = "Face",
+                painter = painterResource(R.drawable.square_shapes_and_symbols_svgrepo_com),
+                contentDescription = "Square",
                 modifier = Modifier
+                    .size(64.dp)
                     .padding(10.dp)
                     .offset(pOffset.x.dp, pOffset.y.dp)
                     .rotate(rtatView)
