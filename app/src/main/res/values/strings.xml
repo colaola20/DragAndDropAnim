@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">DragAndDropAnim_Demo</string>
+    <string name="right_arrow">Right Arrow</string>
 </resources>
