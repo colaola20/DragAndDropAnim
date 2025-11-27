@@ -4,6 +4,8 @@ package edu.farmingdale.draganddropanim_demo
 
 import android.content.ClipData
 import android.content.ClipDescription
+import android.util.DisplayMetrics
+import android.view.Display
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -35,6 +37,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,11 +54,13 @@ import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.minus
 import androidx.compose.ui.unit.sp
 
 //private val rotation = FloatPropKey()
@@ -63,7 +68,8 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun DragAndDropBoxes(modifier: Modifier = Modifier) {
-    var isPlaying by remember { mutableStateOf(true) }
+    var isPlaying by remember { mutableStateOf(1) }
+    val config = LocalConfiguration.current
     Column(modifier = modifier.fillMaxSize()) {
 
         Row(
@@ -92,7 +98,8 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                             target = remember {
                                 object : DragAndDropTarget {
                                     override fun onDrop(event: DragAndDropEvent): Boolean {
-                                        isPlaying = !isPlaying
+                                        if (isPlaying==0) {isPlaying=1;}
+                                        else {isPlaying=0;}
                                         dragBoxIndex = index
                                         return true
                                     }
@@ -131,8 +138,10 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
         val infiniteTransition = rememberInfiniteTransition(label="infinite")
         val pOffset by animateIntOffsetAsState(
             targetValue = when (isPlaying) {
-                true -> IntOffset(130, 250)
-                false -> IntOffset(130, 100)
+                1 -> IntOffset(130, 250)
+                0 -> IntOffset(130, 100)
+                2 -> IntOffset(config.screenWidthDp/2,config.screenHeightDp/4)
+                else -> IntOffset(0,0)
             },
             animationSpec = tween(3000, easing = LinearEasing)
         )
@@ -145,6 +154,9 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                 tween(2000, easing = LinearEasing),
             )
         )
+        Button(onClick = {
+            isPlaying = 2
+        }) {Text("Center") }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
