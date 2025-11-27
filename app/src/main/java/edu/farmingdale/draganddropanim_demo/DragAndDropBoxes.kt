@@ -7,8 +7,11 @@ import android.content.ClipDescription
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntOffsetAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.repeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -29,6 +32,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Icon
@@ -47,6 +51,8 @@ import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -58,10 +64,10 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun DragAndDropBoxes(modifier: Modifier = Modifier) {
     var isPlaying by remember { mutableStateOf(true) }
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = modifier.fillMaxSize()) {
 
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .weight(0.2f)
         ) {
@@ -100,23 +106,17 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                         enter = scaleIn() + fadeIn(),
                         exit = scaleOut() + fadeOut()
                     ) {
-                        Text(
-                            text = "Right",
-                            fontSize = 40.sp,
-                            color = Color.Red,
-                            fontWeight = FontWeight.Bold,
-
+                        Icon(
+                            painter = painterResource(R.drawable.outline_arrow_right_alt_24),
+                            contentDescription = stringResource(R.string.right_arrow),
                             modifier = Modifier
                                 .fillMaxSize()
-                                .dragAndDropSource {
+                                .dragAndDropSource{
                                     detectTapGestures(
                                         onLongPress = { offset ->
                                             startTransfer(
                                                 transferData = DragAndDropTransferData(
-                                                    clipData = ClipData.newPlainText(
-                                                        "text",
-                                                        ""
-                                                    )
+                                                    clipData = ClipData.newPlainText("icon", "Right Arrow")
                                                 )
                                             )
                                         }
@@ -128,22 +128,21 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
             }
         }
 
-
+        val infiniteTransition = rememberInfiniteTransition(label="infinite")
         val pOffset by animateIntOffsetAsState(
             targetValue = when (isPlaying) {
-                true -> IntOffset(130, 300)
+                true -> IntOffset(130, 250)
                 false -> IntOffset(130, 100)
             },
             animationSpec = tween(3000, easing = LinearEasing)
         )
 
-        val rtatView by animateFloatAsState(
-            targetValue = if (isPlaying) 360f else 0.0f,
+        val rtatView by infiniteTransition.animateFloat(
+            initialValue = 0F,
+            targetValue = 360f,
             // Configure the animation duration and easing.
-            animationSpec = repeatable(
-                iterations = if (isPlaying) 10 else 1,
-                tween(durationMillis = 3000, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
+            animationSpec = infiniteRepeatable(
+                tween(2000, easing = LinearEasing),
             )
         )
         Box(
@@ -153,12 +152,14 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                 .background(Color.Red)
         ) {
             Icon(
-                imageVector = Icons.Default.Face,
-                contentDescription = "Face",
+                painter = painterResource(R.drawable.square_shapes_and_symbols_svgrepo_com),
+                contentDescription = "Square",
                 modifier = Modifier
+                    .size(64.dp)
                     .padding(10.dp)
                     .offset(pOffset.x.dp, pOffset.y.dp)
-                    .rotate(rtatView)
+                    .rotate(rtatView),
+
             )
         }
     }
