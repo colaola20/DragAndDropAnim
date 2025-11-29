@@ -54,6 +54,7 @@ import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -69,7 +70,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun DragAndDropBoxes(modifier: Modifier = Modifier) {
-    var isPlaying by remember { mutableStateOf(1) }
+    var isPlaying by remember { mutableStateOf(0) }
     val config = LocalConfiguration.current
     Column(modifier = modifier.fillMaxSize()) {
 
@@ -139,9 +140,9 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
         val infiniteTransition = rememberInfiniteTransition(label="infinite")
         val pOffset by animateIntOffsetAsState(
             targetValue = when (isPlaying) {
+                0 -> IntOffset(0,0)
                 1 -> IntOffset(130, 250)
-                0 -> IntOffset(130, 100)
-                2 -> IntOffset(config.screenWidthDp/2,config.screenHeightDp/4)
+                2 -> IntOffset(130, 100)
                 else -> IntOffset(0,0)
             },
             animationSpec = tween(3000, easing = LinearEasing)
@@ -152,28 +153,39 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
             targetValue = 360f,
             // Configure the animation duration and easing.
             animationSpec = infiniteRepeatable(
-                tween(2000, easing = LinearEasing),
+                tween(3000, easing = LinearEasing),
             )
         )
+
         Button(onClick = {
-            isPlaying = 2
-        }) {Text("Center") }
+            isPlaying = 0
+        }, modifier = Modifier
+            .padding(start = 5.dp,bottom = 2.dp)
+            .align(Alignment.CenterHorizontally), )
+        {
+            Text("Center") }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(0.8f)
                 .background(Color.Red)
         ) {
-            Icon(
-                painter = painterResource(R.drawable.square_shapes_and_symbols_svgrepo_com),
-                contentDescription = "Square",
+            Box(
                 modifier = Modifier
-                    .size(64.dp)
-                    .padding(10.dp)
-                    .offset(pOffset.x.dp, pOffset.y.dp)
-                    .rotate(rtatView),
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+                Icon(
+                    painter = painterResource(R.drawable.rectangle),
+                    contentDescription = "Rectangle",
+                    modifier = Modifier
+                        .size(130.dp)
+                        .padding(2.dp)
+                        .offset(pOffset.x.dp, pOffset.y.dp)
+                        .rotate(rtatView)
+                )
+            }
 
-            )
         }
     }
 }
