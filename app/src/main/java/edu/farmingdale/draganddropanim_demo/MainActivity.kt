@@ -37,8 +37,8 @@ class MainActivity : ComponentActivity() {
 // ToDone 4: Replace the command right with a image or icon
 // ToDone 5: Make this works in landscape mode only
 // ToDone 6: Rotate the rect around itself
-// ToDo 7: Move - translate the rect horizontally and vertically
+// ToDone 7: Move - translate the rect horizontally and vertically
 // ToDone 8: Add a button to reset the rect to the center of the screen
-// ToDo 9: Enable certain animation based on the drop event (like up or down)
+// ToDone 9: Enable certain animation based on the drop event (like up or down)
 // ToDo 10: Make sure to commit for each one of the above and submit this individually
 

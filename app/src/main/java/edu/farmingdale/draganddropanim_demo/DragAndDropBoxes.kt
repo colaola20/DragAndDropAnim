@@ -26,6 +26,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.draganddrop.dragAndDropSource
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,6 +42,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -59,6 +61,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -71,7 +74,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun DragAndDropBoxes(modifier: Modifier = Modifier) {
     var isPlaying by remember { mutableStateOf(0) }
-    val config = LocalConfiguration.current
+    var position by remember { mutableStateOf(IntOffset(0, 0)) }
+
     Column(modifier = modifier.fillMaxSize()) {
 
         Row(
@@ -103,11 +107,18 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
 
                                         dragBoxIndex = index
 
-                                        when (index) {
-                                            0 -> isPlaying = 1  // up
-                                            1 -> isPlaying = 2   // down
-                                            2 -> isPlaying = 3    // left
-                                            else -> isPlaying = 4  // right
+                                        position = when (index) {
+                                            0 -> IntOffset(0, -100)  // up
+                                            1 -> IntOffset(0, 100)   // down
+                                            2 -> IntOffset(-170, 0)  // left
+                                            else -> IntOffset(170, 0) // right
+                                        }
+
+                                        isPlaying = when (index) {
+                                            0 -> 1
+                                            1 -> 2
+                                            2 -> 3
+                                            else -> 4
                                         }
 
                                         return true
@@ -123,8 +134,8 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                         exit = scaleOut() + fadeOut()
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.outline_arrow_right_alt_24),
-                            contentDescription = stringResource(R.string.right_arrow),
+                            painter = painterResource(R.drawable.cat),
+                            contentDescription = stringResource(R.string.cat),
                             modifier = Modifier
                                 .fillMaxSize()
                                 .dragAndDropSource{
@@ -138,22 +149,20 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                                         }
                                     )
                                 }
+
                         )
                     }
                 }
             }
         }
 
+
+
         val infiniteTransition = rememberInfiniteTransition(label="infinite")
+
         val pOffset by animateIntOffsetAsState(
-            targetValue = when (isPlaying) {
-                0 -> IntOffset(0,0)
-                1 -> IntOffset(0,100) //up
-                2 -> IntOffset(0,-100) //down
-                3 -> IntOffset(-100,0) //left
-                else -> IntOffset(100,0) //right
-            },
-            animationSpec = tween(3000, easing = LinearEasing)
+            targetValue = position,
+            animationSpec = tween(2000, easing = LinearEasing)
         )
 
         val rtatView by infiniteTransition.animateFloat(
