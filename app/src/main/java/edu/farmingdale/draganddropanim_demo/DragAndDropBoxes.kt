@@ -47,7 +47,14 @@ import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -131,7 +138,7 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
 
         val pOffset by animateIntOffsetAsState(
             targetValue = when (isPlaying) {
-                true -> IntOffset(130, 300)
+                true -> IntOffset(100, 300)
                 false -> IntOffset(130, 100)
             },
             animationSpec = tween(3000, easing = LinearEasing)
@@ -152,15 +159,22 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                 .weight(0.8f)
                 .background(Color.Red)
         ) {
+            val configuration = LocalConfiguration.current
+
             Icon(
-                imageVector = Icons.Default.Face,
-                contentDescription = "Face",
+                painter = painterResource(R.drawable.rectangle),
+                contentDescription = "Rectangle",
                 modifier = Modifier
                     .padding(10.dp)
-                    .offset(pOffset.x.dp, pOffset.y.dp)
+                    .offset(configuration.screenWidthDp.dp / 2, configuration.screenHeightDp.dp / 2)
                     .rotate(rtatView)
             )
         }
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun DragDropPreview() {
+    DragAndDropBoxes()
+}
