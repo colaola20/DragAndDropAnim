@@ -6,13 +6,10 @@ import android.content.ClipData
 import android.content.ClipDescription
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntOffsetAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.repeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -33,8 +30,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,23 +49,24 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 //private val rotation = FloatPropKey()
 
 
 @Composable
 fun DragAndDropBoxes(modifier: Modifier = Modifier) {
-    var isPlaying by remember { mutableStateOf(true) }
-    Column(modifier = modifier.fillMaxSize()) {
+    var isPlaying by remember { mutableStateOf(0) }
+    var position by remember { mutableStateOf(IntOffset(0, 0)) }
+
+    Column(modifier = Modifier.fillMaxSize()) {
 
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
-                .weight(0.2f)
+                .weight(0.3f)
         ) {
             val boxCount = 4
             var dragBoxIndex by remember {
@@ -92,8 +89,16 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                             target = remember {
                                 object : DragAndDropTarget {
                                     override fun onDrop(event: DragAndDropEvent): Boolean {
-                                        isPlaying = !isPlaying
+
                                         dragBoxIndex = index
+
+                                        isPlaying = when (index) {
+                                            0 -> 1  // up
+                                            1 -> 2   // down
+                                            2 -> 3    // left
+                                            else -> 4  // right
+                                        }
+
                                         return true
                                     }
                                 }
@@ -131,10 +136,13 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
         val infiniteTransition = rememberInfiniteTransition(label="infinite")
         val pOffset by animateIntOffsetAsState(
             targetValue = when (isPlaying) {
-                true -> IntOffset(130, 250)
-                false -> IntOffset(130, 100)
+                0 -> position + IntOffset(0,0)
+                1 -> position + IntOffset(0,-100) // up
+                2 -> position + IntOffset(0,100) // down
+                3 -> position + IntOffset(-170,0) // left
+                else -> position +IntOffset(170,0) // right
             },
-            animationSpec = tween(3000, easing = LinearEasing)
+            animationSpec = tween(1500, easing = LinearEasing)
         )
 
         val rtatView by infiniteTransition.animateFloat(
@@ -142,26 +150,41 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
             targetValue = 360f,
             // Configure the animation duration and easing.
             animationSpec = infiniteRepeatable(
-                tween(2000, easing = LinearEasing),
+                tween(3000, easing = LinearEasing),
             )
         )
+
+        Button(onClick = {
+            isPlaying = 0
+        }, modifier = Modifier
+            .padding(start = 5.dp,bottom = 2.dp)
+            .align(Alignment.CenterHorizontally), )
+        {
+            Text("Center") }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.8f)
-                .background(Color.Red)
+                .weight(0.7f)
+                .background(Color.Red),
+            contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(R.drawable.square_shapes_and_symbols_svgrepo_com),
-                contentDescription = "Square",
+                contentDescription = "Rectangle",
                 modifier = Modifier
-                    .size(64.dp)
-                    .padding(10.dp)
+                    .size(48.dp)
+                    .padding(2.dp)
                     .offset(pOffset.x.dp, pOffset.y.dp)
-                    .rotate(rtatView),
-
+                    .rotate(rtatView)
             )
+
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DragDropPreview() {
+    DragAndDropBoxes()
 }
 
