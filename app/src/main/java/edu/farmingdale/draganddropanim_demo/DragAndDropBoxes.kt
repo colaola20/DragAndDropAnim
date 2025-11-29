@@ -107,18 +107,11 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
 
                                         dragBoxIndex = index
 
-                                        position = when (index) {
-                                            0 -> IntOffset(0, -100)  // up
-                                            1 -> IntOffset(0, 100)   // down
-                                            2 -> IntOffset(-170, 0)  // left
-                                            else -> IntOffset(170, 0) // right
-                                        }
-
                                         isPlaying = when (index) {
-                                            0 -> 1
-                                            1 -> 2
-                                            2 -> 3
-                                            else -> 4
+                                            0 -> 1  // up
+                                            1 -> 2   // down
+                                            2 -> 3    // left
+                                            else -> 4  // right
                                         }
 
                                         return true
@@ -161,8 +154,14 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
         val infiniteTransition = rememberInfiniteTransition(label="infinite")
 
         val pOffset by animateIntOffsetAsState(
-            targetValue = position,
-            animationSpec = tween(2000, easing = LinearEasing)
+            targetValue = when (isPlaying) {
+                0 -> position + IntOffset(0,0)
+                1 -> position + IntOffset(0,-100) // down
+                2 -> position + IntOffset(0,100) // up
+                3 -> position + IntOffset(-170,0) // left
+                else -> position +IntOffset(170,0) // right
+            },
+            animationSpec = tween(3000, easing = LinearEasing)
         )
 
         val rtatView by infiniteTransition.animateFloat(
