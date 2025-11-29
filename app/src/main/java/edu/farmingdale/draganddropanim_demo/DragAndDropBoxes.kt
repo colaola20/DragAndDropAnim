@@ -100,9 +100,16 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                             target = remember {
                                 object : DragAndDropTarget {
                                     override fun onDrop(event: DragAndDropEvent): Boolean {
-                                        if (isPlaying==0) {isPlaying=1;}
-                                        else {isPlaying=0;}
+
                                         dragBoxIndex = index
+
+                                        when (index) {
+                                            0 -> isPlaying = 1  // up
+                                            1 -> isPlaying = 2   // down
+                                            2 -> isPlaying = 3    // left
+                                            else -> isPlaying = 4  // right
+                                        }
+
                                         return true
                                     }
                                 }
@@ -141,9 +148,10 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
         val pOffset by animateIntOffsetAsState(
             targetValue = when (isPlaying) {
                 0 -> IntOffset(0,0)
-                1 -> IntOffset(130, 250)
-                2 -> IntOffset(130, 100)
-                else -> IntOffset(0,0)
+                1 -> IntOffset(0,100) //up
+                2 -> IntOffset(0,-100) //down
+                3 -> IntOffset(-100,0) //left
+                else -> IntOffset(100,0) //right
             },
             animationSpec = tween(3000, easing = LinearEasing)
         )
@@ -179,7 +187,7 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                     painter = painterResource(R.drawable.rectangle),
                     contentDescription = "Rectangle",
                     modifier = Modifier
-                        .size(130.dp)
+                        .size(90.dp)
                         .padding(2.dp)
                         .offset(pOffset.x.dp, pOffset.y.dp)
                         .rotate(rtatView)
