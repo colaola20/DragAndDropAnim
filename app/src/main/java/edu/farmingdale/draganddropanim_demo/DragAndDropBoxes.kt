@@ -26,6 +26,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.draganddrop.dragAndDropSource
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,6 +42,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -54,10 +56,12 @@ import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -69,8 +73,9 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun DragAndDropBoxes(modifier: Modifier = Modifier) {
-    var isPlaying by remember { mutableStateOf(1) }
-    val config = LocalConfiguration.current
+    var isPlaying by remember { mutableStateOf(0) }
+    var position by remember { mutableStateOf(IntOffset(0, 0)) }
+
     Column(modifier = modifier.fillMaxSize()) {
 
         Row(
@@ -99,9 +104,23 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                             target = remember {
                                 object : DragAndDropTarget {
                                     override fun onDrop(event: DragAndDropEvent): Boolean {
-                                        if (isPlaying==0) {isPlaying=1;}
-                                        else {isPlaying=0;}
+
                                         dragBoxIndex = index
+
+                                        position = when (index) {
+                                            0 -> IntOffset(0, -100)  // up
+                                            1 -> IntOffset(0, 100)   // down
+                                            2 -> IntOffset(-170, 0)  // left
+                                            else -> IntOffset(170, 0) // right
+                                        }
+
+                                        isPlaying = when (index) {
+                                            0 -> 1
+                                            1 -> 2
+                                            2 -> 3
+                                            else -> 4
+                                        }
+
                                         return true
                                     }
                                 }
@@ -115,8 +134,8 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                         exit = scaleOut() + fadeOut()
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.outline_arrow_right_alt_24),
-                            contentDescription = stringResource(R.string.right_arrow),
+                            painter = painterResource(R.drawable.cat),
+                            contentDescription = stringResource(R.string.cat),
                             modifier = Modifier
                                 .fillMaxSize()
                                 .dragAndDropSource{
@@ -130,21 +149,20 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                                         }
                                     )
                                 }
+
                         )
                     }
                 }
             }
         }
 
+
+
         val infiniteTransition = rememberInfiniteTransition(label="infinite")
+
         val pOffset by animateIntOffsetAsState(
-            targetValue = when (isPlaying) {
-                1 -> IntOffset(130, 250)
-                0 -> IntOffset(130, 100)
-                2 -> IntOffset(config.screenWidthDp/2,config.screenHeightDp/4)
-                else -> IntOffset(0,0)
-            },
-            animationSpec = tween(3000, easing = LinearEasing)
+            targetValue = position,
+            animationSpec = tween(2000, easing = LinearEasing)
         )
 
         val rtatView by infiniteTransition.animateFloat(
@@ -152,28 +170,39 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
             targetValue = 360f,
             // Configure the animation duration and easing.
             animationSpec = infiniteRepeatable(
-                tween(2000, easing = LinearEasing),
+                tween(3000, easing = LinearEasing),
             )
         )
+
         Button(onClick = {
-            isPlaying = 2
-        }) {Text("Center") }
+            isPlaying = 0
+        }, modifier = Modifier
+            .padding(start = 5.dp,bottom = 2.dp)
+            .align(Alignment.CenterHorizontally), )
+        {
+            Text("Center") }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(0.8f)
                 .background(Color.Red)
         ) {
-            Icon(
-                painter = painterResource(R.drawable.square_shapes_and_symbols_svgrepo_com),
-                contentDescription = "Square",
+            Box(
                 modifier = Modifier
-                    .size(64.dp)
-                    .padding(10.dp)
-                    .offset(pOffset.x.dp, pOffset.y.dp)
-                    .rotate(rtatView),
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+                Icon(
+                    painter = painterResource(R.drawable.rectangle),
+                    contentDescription = "Rectangle",
+                    modifier = Modifier
+                        .size(90.dp)
+                        .padding(2.dp)
+                        .offset(pOffset.x.dp, pOffset.y.dp)
+                        .rotate(rtatView)
+                )
+            }
 
-            )
         }
     }
 }
