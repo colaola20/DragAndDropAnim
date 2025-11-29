@@ -4,17 +4,12 @@ package edu.farmingdale.draganddropanim_demo
 
 import android.content.ClipData
 import android.content.ClipDescription
-import android.util.DisplayMetrics
-import android.view.Display
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntOffsetAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.repeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -26,7 +21,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.draganddrop.dragAndDropSource
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,13 +30,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -56,17 +47,11 @@ import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.draganddrop.mimeTypes
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.layout
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.minus
-import androidx.compose.ui.unit.sp
 
 //private val rotation = FloatPropKey()
 
@@ -76,12 +61,12 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
     var isPlaying by remember { mutableStateOf(0) }
     var position by remember { mutableStateOf(IntOffset(0, 0)) }
 
-    Column(modifier = modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize()) {
 
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
-                .weight(0.2f)
+                .weight(0.3f)
         ) {
             val boxCount = 4
             var dragBoxIndex by remember {
@@ -127,8 +112,8 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                         exit = scaleOut() + fadeOut()
                     ) {
                         Icon(
-                            painter = painterResource(R.drawable.cat),
-                            contentDescription = stringResource(R.string.cat),
+                            painter = painterResource(R.drawable.outline_arrow_right_alt_24),
+                            contentDescription = stringResource(R.string.right_arrow),
                             modifier = Modifier
                                 .fillMaxSize()
                                 .dragAndDropSource{
@@ -142,17 +127,13 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
                                         }
                                     )
                                 }
-
                         )
                     }
                 }
             }
         }
 
-
-
         val infiniteTransition = rememberInfiniteTransition(label="infinite")
-
         val pOffset by animateIntOffsetAsState(
             targetValue = when (isPlaying) {
                 0 -> position + IntOffset(0,0)
@@ -183,24 +164,19 @@ fun DragAndDropBoxes(modifier: Modifier = Modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.8f)
-                .background(Color.Red)
+                .weight(0.7f)
+                .background(Color.Red),
+            contentAlignment = Alignment.Center
         ) {
-            Box(
+            Icon(
+                painter = painterResource(R.drawable.square_shapes_and_symbols_svgrepo_com),
+                contentDescription = "Rectangle",
                 modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ){
-                Icon(
-                    painter = painterResource(R.drawable.rectangle),
-                    contentDescription = "Rectangle",
-                    modifier = Modifier
-                        .size(90.dp)
-                        .padding(2.dp)
-                        .offset(pOffset.x.dp, pOffset.y.dp)
-                        .rotate(rtatView)
-                )
-            }
+                    .size(48.dp)
+                    .padding(2.dp)
+                    .offset(pOffset.x.dp, pOffset.y.dp)
+                    .rotate(rtatView)
+            )
 
         }
     }

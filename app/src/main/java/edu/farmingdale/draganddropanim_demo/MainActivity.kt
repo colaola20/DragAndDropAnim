@@ -42,3 +42,4 @@ class MainActivity : ComponentActivity() {
 // ToDone 9: Enable certain animation based on the drop event (like up or down)
 // ToDo 10: Make sure to commit for each one of the above and submit this individually
 
+
